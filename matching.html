@@ -1,0 +1,436 @@
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Siklus Air</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#2E7FBF;
+    --sky-bottom:#7FC4E8;
+    --cloud:#FBFDFF;
+    --sun:#FFC94D;
+    --sun-dark:#C4832A;
+    --ocean:#0B3D5C;
+    --leaf:#4E9E63;
+    --leaf-dark:#2E6B3E;
+    --soil:#8B5E3C;
+    --card-back-1:#1B6FA8;
+    --card-back-2:#144E78;
+    --ink:#0B3D5C;
+    --paper:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 55%,#BFE6C8 100%);
+    min-height:100vh;
+    padding:24px 16px 60px;
+    color:var(--ink);
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:18px;position:relative;}
+  .sun{
+    position:absolute;top:-10px;right:6px;
+    width:54px;height:54px;border-radius:50%;
+    background:var(--sun);
+    box-shadow:0 0 0 8px rgba(255,201,77,0.35);
+  }
+  h1{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
+    font-size:clamp(26px,5vw,38px);
+    color:var(--paper);
+    text-shadow:0 3px 0 rgba(11,61,92,0.5);
+    margin:0 0 4px;
+  }
+  .subtitle{
+    font-weight:600;
+    color:var(--paper);
+    opacity:0.95;
+    font-size:15px;
+    margin:0;
+  }
+
+  .stats{
+    display:flex;justify-content:center;gap:12px;
+    margin:18px 0 20px;flex-wrap:wrap;
+  }
+  .stat-pill{
+    background:var(--paper);
+    border-radius:999px;
+    padding:8px 18px;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--ocean);
+    box-shadow:0 3px 0 rgba(11,61,92,0.15);
+    display:flex;align-items:center;gap:6px;
+  }
+  .stat-pill span.num{color:var(--sun-dark);}
+
+  .gauge-wrap{
+    max-width:420px;margin:0 auto 26px;
+    text-align:center;
+  }
+  .gauge-label{
+    font-weight:700;font-size:13px;color:var(--paper);
+    margin-bottom:6px;
+  }
+  .gauge{
+    height:14px;border-radius:999px;
+    background:rgba(255,255,255,0.35);
+    overflow:hidden;
+    border:2px solid rgba(255,255,255,0.6);
+  }
+  .gauge-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4E9E63,#8FD19E);
+    border-radius:999px;
+    transition:width .5s ease;
+  }
+
+  .board{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    max-width:640px;
+    margin:0 auto;
+  }
+  @media (max-width:520px){
+    .board{grid-template-columns:repeat(3,1fr);}
+  }
+
+  .card{
+    aspect-ratio:3/4;
+    perspective:800px;
+    cursor:pointer;
+  }
+  .card-inner{
+    position:relative;
+    width:100%;height:100%;
+    transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.8,.3,1);
+  }
+  .card.flipped .card-inner{transform:rotateY(180deg);}
+  .card.matched .card-inner{transform:rotateY(180deg);}
+  .card-face{
+    position:absolute;inset:0;
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+    border-radius:14px;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    padding:8px;
+    text-align:center;
+  }
+  .card-back{
+    background:linear-gradient(160deg,var(--card-back-1),var(--card-back-2));
+    box-shadow:0 4px 0 rgba(11,61,92,0.45), inset 0 0 0 2px rgba(255,255,255,0.15);
+  }
+  .card-back::after{
+    content:"💧";
+    font-size:26px;
+    filter:drop-shadow(0 2px 0 rgba(0,0,0,0.15));
+  }
+  .card-front{
+    background:var(--paper);
+    transform:rotateY(180deg);
+    box-shadow:0 4px 0 rgba(11,61,92,0.2);
+    border:2px solid #E4EEF4;
+    gap:4px;
+  }
+  .card.matched .card-front{
+    background:#EAF6EC;
+    border-color:#B7DDBE;
+  }
+  .card-icon{font-size:24px;line-height:1;}
+  .card-term{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    color:var(--ocean);
+    line-height:1.15;
+  }
+  .card-desc{
+    font-size:10px;
+    font-weight:600;
+    color:#4A6B80;
+    line-height:1.2;
+  }
+  .card.matched .card-term,.card.matched .card-desc{color:var(--leaf-dark);}
+
+  .card.shake .card-inner{animation:shake .4s;}
+  @keyframes shake{
+    10%,90%{transform:translateX(-2px) rotateY(180deg);}
+    20%,80%{transform:translateX(3px) rotateY(180deg);}
+    30%,50%,70%{transform:translateX(-5px) rotateY(180deg);}
+    40%,60%{transform:translateX(5px) rotateY(180deg);}
+  }
+
+  .controls{
+    text-align:center;margin-top:26px;
+  }
+  button.reset{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--paper);
+    background:var(--leaf);
+    border:none;
+    border-radius:999px;
+    padding:12px 26px;
+    cursor:pointer;
+    box-shadow:0 4px 0 var(--leaf-dark);
+    transition:transform .1s;
+  }
+  button.reset:active{transform:translateY(3px);box-shadow:0 1px 0 var(--leaf-dark);}
+
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(11,61,92,0.55);
+    display:none;
+    align-items:center;justify-content:center;
+    padding:20px;
+    z-index:10;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--paper);
+    border-radius:20px;
+    padding:32px 28px;
+    max-width:340px;
+    text-align:center;
+    box-shadow:0 10px 0 rgba(11,61,92,0.25);
+  }
+  .modal .emoji{font-size:44px;margin-bottom:8px;}
+  .modal h2{
+    font-family:'Baloo 2',sans-serif;
+    color:var(--ocean);
+    margin:0 0 6px;
+    font-size:22px;
+  }
+  .modal p{
+    font-size:14px;color:#4A6B80;font-weight:600;
+    margin:0 0 20px;
+  }
+
+  .legend{
+    max-width:640px;margin:30px auto 0;
+    background:rgba(255,255,255,0.85);
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:13px;
+    color:var(--ocean);
+    font-weight:600;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="sun"></div>
+    <h1>Petualangan Siklus Air</h1>
+    <p class="subtitle">Cocokkan setiap tahap dengan penjelasannya</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat-pill">⏱️ <span class="num" id="timer">00:00</span></div>
+    <div class="stat-pill">🔄 Langkah: <span class="num" id="moves">0</span></div>
+    <div class="stat-pill">✅ <span class="num" id="pairsFound">0</span>/6</div>
+  </div>
+
+  <div class="gauge-wrap">
+    <div class="gauge-label">Progres siklus air</div>
+    <div class="gauge"><div class="gauge-fill" id="gaugeFill"></div></div>
+  </div>
+
+  <div class="board" id="board"></div>
+
+  <div class="controls">
+    <button class="reset" id="resetBtn">Main Lagi 🔁</button>
+  </div>
+
+  <div class="legend">Klik dua kartu untuk mencocokkan nama tahap siklus air dengan penjelasannya. Semakin sedikit langkah, semakin hebat kamu!</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="emoji">🌈</div>
+    <h2>Selesai!</h2>
+    <p id="resultText">Kamu berhasil menyelesaikan siklus air.</p>
+    <button class="reset" id="playAgainBtn">Main Lagi 🔁</button>
+    <!-- =================================
+     TOMBOL KEMBALI
+================================== -->
+
+<button
+    class="kembali"
+    onclick="window.location.href='menuGame.html'">
+
+    ⬅ Kembali
+
+</button>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </div>
+</div>
+
+<script>
+const pairsData = [
+  { id:1, icon:"☀️", term:"Evaporasi", desc:"Air laut menguap karena panas matahari" },
+  { id:2, icon:"☁️", term:"Kondensasi", desc:"Uap air berubah menjadi awan" },
+  { id:3, icon:"🌧️", term:"Presipitasi", desc:"Awan turun menjadi hujan" },
+  { id:4, icon:"🌱", term:"Infiltrasi", desc:"Air meresap ke dalam tanah" },
+  { id:5, icon:"🏞️", term:"Limpasan", desc:"Air mengalir di permukaan menuju sungai" },
+  { id:6, icon:"🌳", term:"Transpirasi", desc:"Tumbuhan melepas uap air lewat daun" },
+];
+
+let cards = [];
+let flipped = [];
+let matchedCount = 0;
+let moves = 0;
+let timerInterval = null;
+let seconds = 0;
+let lock = false;
+
+const board = document.getElementById('board');
+const movesEl = document.getElementById('moves');
+const pairsFoundEl = document.getElementById('pairsFound');
+const timerEl = document.getElementById('timer');
+const gaugeFill = document.getElementById('gaugeFill');
+const overlay = document.getElementById('overlay');
+const resultText = document.getElementById('resultText');
+
+function buildDeck(){
+  const deck = [];
+  pairsData.forEach(p=>{
+    deck.push({ pairId:p.id, icon:p.icon, label:p.term, kind:'term' });
+    deck.push({ pairId:p.id, icon:p.icon, label:p.desc, kind:'desc' });
+  });
+  for(let i=deck.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [deck[i],deck[j]] = [deck[j],deck[i]];
+  }
+  return deck;
+}
+
+function formatTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return m+":"+sec;
+}
+
+function startTimer(){
+  if(timerInterval) return;
+  timerInterval = setInterval(()=>{
+    seconds++;
+    timerEl.textContent = formatTime(seconds);
+  },1000);
+}
+
+function stopTimer(){
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function render(){
+  board.innerHTML = '';
+  cards = buildDeck();
+  cards.forEach((c,idx)=>{
+    const cardEl = document.createElement('div');
+    cardEl.className = 'card';
+    cardEl.dataset.index = idx;
+    cardEl.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-back"></div>
+        <div class="card-face card-front">
+          <div class="card-icon">${c.icon}</div>
+          <div class="${c.kind==='term' ? 'card-term' : 'card-desc'}">${c.label}</div>
+        </div>
+      </div>
+    `;
+    cardEl.addEventListener('click', ()=>handleFlip(idx, cardEl));
+    board.appendChild(cardEl);
+  });
+}
+
+function handleFlip(idx, el){
+  if(lock) return;
+  if(el.classList.contains('flipped') || el.classList.contains('matched')) return;
+  if(flipped.length === 0) startTimer();
+
+  el.classList.add('flipped');
+  flipped.push({idx, el});
+
+  if(flipped.length === 2){
+    moves++;
+    movesEl.textContent = moves;
+    lock = true;
+    const [a,b] = flipped;
+    const cardA = cards[a.idx];
+    const cardB = cards[b.idx];
+
+    if(cardA.pairId === cardB.pairId){
+      setTimeout(()=>{
+        a.el.classList.add('matched');
+        b.el.classList.add('matched');
+        matchedCount++;
+        pairsFoundEl.textContent = matchedCount;
+        gaugeFill.style.width = (matchedCount/pairsData.length*100)+'%';
+        flipped = [];
+        lock = false;
+        if(matchedCount === pairsData.length){
+          stopTimer();
+          resultText.textContent = `Selesai dalam ${formatTime(seconds)} dan ${moves} langkah. Kerja bagus!`;
+          setTimeout(()=>overlay.classList.add('show'), 400);
+        }
+      }, 350);
+    } else {
+      a.el.classList.add('shake');
+      b.el.classList.add('shake');
+      setTimeout(()=>{
+        a.el.classList.remove('flipped','shake');
+        b.el.classList.remove('flipped','shake');
+        flipped = [];
+        lock = false;
+      }, 700);
+    }
+  }
+}
+
+function resetGame(){
+  stopTimer();
+  seconds = 0;
+  moves = 0;
+  matchedCount = 0;
+  flipped = [];
+  lock = false;
+  timerEl.textContent = '00:00';
+  movesEl.textContent = '0';
+  pairsFoundEl.textContent = '0';
+  gaugeFill.style.width = '0%';
+  overlay.classList.remove('show');
+  render();
+}
+
+document.getElementById('resetBtn').addEventListener('click', resetGame);
+document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<style>
+    /* ==============================
+       RESET
+    ============================== */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+
+    /* ==============================
+       BODY
+    ============================== */
+
+    body {
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: white;
+
+        font-family: Arial, sans-serif;
+    }
+
+
+    /* ==============================
+       PEMBUNGKUS SEMUA MENU
+    ============================== */
+
+    .container {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: center;
+
+        gap: 35px;
+    }
+
+
+    /* ==============================
+       3 TOMBOL GAME
+    ============================== */
+
+    .menu {
+        display: flex;
+
+        flex-direction: row;
+
+        justify-content: center;
+        align-items: center;
+
+        gap: 30px;
+    }
+
+
+    /* ==============================
+       TOMBOL GAMBAR
+    ============================== */
+
+    .tombol {
+        border: none;
+        background: transparent;
+
+        padding: 0;
+
+        cursor: pointer;
+
+        transition: transform 0.2s ease;
+    }
+
+
+    .tombol img {
+        display: block;
+
+        width: 250px;
+        height: auto;
+    }
+
+
+    /* ==============================
+       EFEK TOMBOL
+    ============================== */
+
+    .tombol:hover {
+        transform: scale(1.05);
+    }
+
+
+    .tombol:active {
+        transform: scale(0.95);
+    }
+
+
+    /* ==============================
+       TOMBOL KEMBALI
+    ============================== */
+
+    .kembali {
+        display: block;
+
+        padding: 12px 35px;
+
+        border: none;
+        border-radius: 15px;
+
+        background-color: #4da6d8;
+        color: white;
+
+        font-size: 18px;
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: transform 0.2s ease;
+    }
+
+
+    .kembali:hover {
+        transform: scale(1.05);
+    }
+
+
+    .kembali:active {
+        transform: scale(0.95);
+    }
+
+
+    /* ==============================
+       RESPONSIVE
+    ============================== */
+
+    @media (max-width: 900px) {
+
+        .menu {
+            gap: 15px;
+        }
+
+        .tombol img {
+            width: 200px;
+        }
+    }
+
+
+    @media (max-width: 650px) {
+
+        .menu {
+            flex-wrap: wrap;
+        }
+
+        .tombol img {
+            width: 160px;
+        }
+    }
+</style>
+
+<!-- =====================================
+     CONTAINER UTAMA
+===================================== -->
+
+<div class="container">
+
+```
+<!-- =================================
+     3 TOMBOL GAME
+================================== -->
+
+<div class="menu">
+
+    <!-- TOMBOL 1 -->
+    <button
+        class="tombol"
+        onclick="window.location.href='matching.html'">
+
+        <img
+            src="2.png"
+            alt="Matching Game">
+
+    </button>
+
+
+    <!-- TOMBOL 2 -->
+    <button
+        class="tombol"
+        onclick="window.location.href='permainan_drag_drop_siklus_air.html'">
+
+        <img
+            src="3.png"
+            alt="Drag and Drop Game">
+
+    </button>
+
+
+    <!-- TOMBOL 3 -->
+    <button
+        class="tombol"
+        onclick="window.location.href='true_false.html'">
+
+        <img
+            src="4.png"
+            alt="True False Game">
+
+    </button>
+
+</div>
+
+
+<!-- =================================
+     TOMBOL KEMBALI
+================================== -->
+
+<button
+    class="kembali"
+    onclick="window.location.href='index.html'">
+
+    ⬅ Kembali
+
+</button>
+```
+
+</div>

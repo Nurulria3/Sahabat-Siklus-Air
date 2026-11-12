@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hujan di Dalam Toples</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      color: #263746;
+      background: linear-gradient(180deg, #eaf8ff 0%, #f8fcff 48%, #fffaf0 100%);
+      line-height: 1.65;
+    }
+    .halaman {
+      width: min(1100px, 94%);
+      margin: 28px auto;
+      background: #ffffff;
+      border: 3px solid #c5e9f5;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(49, 116, 145, .12);
+    }
+    header {
+      text-align: center;
+      padding: 28px 22px 20px;
+      background: #dff5fc;
+      border-bottom: 3px dashed #9ed7e8;
+    }
+    .label-atas {
+      display: inline-block;
+      background: #fff1bf;
+      color: #785c13;
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: .85rem;
+      font-weight: bold;
+      letter-spacing: .4px;
+    }
+    h1 {
+      margin: 10px 0 4px;
+      color: #176b83;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+    }
+    .subjudul { margin: 0; color: #4d7180; }
+    main { padding: 24px; }
+    .bagian {
+      background: #fbfeff;
+      border: 2px solid #d9eff6;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+    h2 {
+      margin: 0 0 14px;
+      color: #176b83;
+      font-size: 1.3rem;
+    }
+    .dua-kolom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+    .ilustrasi {
+      text-align: center;
+      background: #f0fbff;
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .ilustrasi img {
+      display: block;
+      width: 100%;
+      max-width: 390px;
+      max-height: 350px;
+      object-fit: contain;
+      margin: auto;
+    }
+    .catatan-gambar { font-size: .88rem; color: #64818c; margin: 4px 0 0; }
+    ol { padding-left: 24px; margin: 0; }
+    li { padding-left: 5px; margin: 0 0 9px; }
+    .alat li::marker { color: #1686a4; font-weight: bold; }
+    .langkah li::marker { color: #e49a32; font-weight: bold; }
+    .peringatan {
+      margin-top: 15px;
+      background: #fff4d8;
+      border-left: 5px solid #f0b342;
+      padding: 12px 15px;
+      border-radius: 10px;
+      font-size: .94rem;
+    }
+    .pertanyaan {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      counter-reset: soal;
+    }
+    .soal {
+      background: #f2fbf8;
+      border: 1px solid #cbeee2;
+      border-radius: 13px;
+      padding: 13px 15px;
+    }
+    .soal strong { color: #24745e; }
+    .ruang-jawaban {
+      margin-top: 9px;
+      height: 30px;
+      border-bottom: 1px dashed #9bb9b5;
+    }
+    footer {
+      text-align: center;
+      background: #eaf8ff;
+      padding: 15px;
+      color: #527582;
+      font-size: .9rem;
+    }
+    @media (max-width: 700px) {
+      main { padding: 14px; }
+      .dua-kolom, .pertanyaan { grid-template-columns: 1fr; }
+      .bagian { padding: 16px; }
+      .ilustrasi img { max-height: 280px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="halaman">
+    <header>
+      <span class="label-atas">YUK, LAKUKAN PERCOBAAN!</span>
+      <h1>🌧️ Hujan di Dalam Toples</h1>
+      <p class="subjudul">Mengamati penguapan dan pengembunan air secara sederhana</p>
+    </header>
+
+    <main>
+      <section class="bagian dua-kolom">
+        <div>
+          <h2>🧰 Alat dan Bahan</h2>
+          <ol class="alat">
+            <li>Toples atau gelas kaca kecil yang transparan.</li>
+            <li>Air panas sekitar 90–100°C.</li>
+            <li>Es batu sebanyak kurang lebih 100 gram.</li>
+            <li>Wadah kecil untuk menampung es batu dan menutup bagian atas toples.</li>
+            <li>Spidol untuk memberi tanda ketinggian air.</li>
+          </ol>
+          <div class="peringatan"><strong>⚠️ Perhatian:</strong> Air panas harus dituangkan oleh guru atau orang dewasa. Jangan menyentuh air panas maupun gelas yang panas.</div>
+        </div>
+        <div class="ilustrasi">
+          <img src="gambar-teko.png" alt="Ilustrasi teko menuangkan air panas ke dalam gelas">
+          <p class="catatan-gambar">Ilustrasi kegiatan menyiapkan air panas</p>
+        </div>
+      </section>
+
+      <section class="bagian">
+        <h2>🔬 Langkah Percobaan</h2>
+        <ol class="langkah">
+          <li>Dengan bantuan guru atau orang dewasa, tuangkan air panas ke dalam toples atau gelas kaca hingga sekitar 1/3 bagian.</li>
+          <li>Beri tanda pada bagian luar gelas sesuai ketinggian permukaan air menggunakan spidol.</li>
+          <li>Letakkan es batu di dalam wadah kecil yang dapat menutup bagian atas toples.</li>
+          <li>Letakkan wadah berisi es batu di atas toples dengan hati-hati.</li>
+          <li>Amati dinding bagian dalam toples. Apakah muncul bintik-bintik air?</li>
+          <li>Setelah sekitar 5 menit, amati kembali permukaan air dan bintik-bintik air yang terbentuk.</li>
+          <li>Diskusikan pertanyaan di bawah ini bersama teman-teman.</li>
+        </ol>
+      </section>
+
+      <section class="bagian">
+        <h2>💭 Pertanyaan Diskusi</h2>
+        <div class="pertanyaan">
+          <div class="soal"><strong>1.</strong> Apakah uap air di dalam toples benar-benar menghilang?
+            <div class="ruang-jawaban"></div></div>
+          <div class="soal"><strong>2.</strong> Menurut kalian, ke mana perginya uap air yang sebelumnya berada di dalam toples?
+            <div class="ruang-jawaban"></div></div>
+          <div class="soal"><strong>3.</strong> Mengapa muncul bintik-bintik air pada dinding toples?
+            <div class="ruang-jawaban"></div></div>
+          <div class="soal"><strong>4.</strong> Apa yang mungkin terjadi jika air di dalam toples dipanaskan kembali?
+            <div class="ruang-jawaban"></div></div>
+        </div>
+      </section>
+
+      <section class="bagian">
+        <h2>📘 Kesimpulan</h2>
+        <p>Lengkapi kalimat berikut berdasarkan hasil pengamatanmu.</p>
+        <p>Air panas mengalami proses __________. Uap air yang menyentuh bagian atas yang dingin berubah menjadi titik-titik air melalui proses __________.</p>
+      </section>
+    </main>
+    <footer>Belajar sains jadi menyenangkan! 💧 Amati, catat, dan diskusikan hasil percobaanmu.</footer>
+  </div>
+</body>
+</html>
