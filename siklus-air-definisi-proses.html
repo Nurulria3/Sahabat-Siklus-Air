@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuk Kenalan Sama Siklus Air! 💧</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+    background: linear-gradient(180deg, #aee7ff 0%, #dff6ff 40%, #fff9e0 100%);
+    min-height:100vh;
+    padding:20px;
+    overflow-x:hidden;
+  }
+
+  .cloud{
+    position:absolute;
+    background:#fff;
+    border-radius:50px;
+    opacity:0.85;
+  }
+  .cloud::before, .cloud::after{
+    content:'';
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+  }
+  .cloud1{ width:120px; height:40px; top:30px; left:5%; }
+  .cloud1::before{ width:60px; height:60px; top:-30px; left:10px; }
+  .cloud1::after{ width:50px; height:50px; top:-20px; left:60px; }
+  .cloud2{ width:90px; height:35px; top:80px; right:8%; }
+  .cloud2::before{ width:45px; height:45px; top:-22px; left:8px; }
+  .cloud2::after{ width:40px; height:40px; top:-18px; left:45px; }
+
+  header{
+    text-align:center;
+    position:relative;
+    z-index:2;
+    padding-top:20px;
+    padding-bottom:10px;
+  }
+  header h1{
+    font-size:2.4em;
+    color:#0b6ea8;
+    text-shadow: 2px 2px 0px #fff;
+  }
+  header p{
+    color:#0b6ea8;
+    font-size:1.1em;
+    margin-top:6px;
+  }
+
+  .mascot-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:15px auto 25px;
+  }
+
+  .container{
+    max-width:900px;
+    margin:0 auto;
+    position:relative;
+    z-index:2;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:24px;
+    padding:22px 26px;
+    margin-bottom:22px;
+    box-shadow: 0 8px 0 #cdeafd, 0 12px 20px rgba(0,0,0,0.08);
+    border: 3px dashed #7fd0ff;
+  }
+
+  .card h2{
+    color:#1287c4;
+    font-size:1.5em;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .card p{
+    color:#37506b;
+    font-size:1.05em;
+    line-height:1.6;
+  }
+
+  .bubble{
+    background:#eaf9ff;
+    border-radius:16px;
+    padding:14px 18px;
+    color:#0b5a82;
+    font-size:1.05em;
+    margin-top:10px;
+    position:relative;
+  }
+  .bubble::before{
+    content:"🗨️";
+    position:absolute;
+    left:-8px;
+    top:-14px;
+    font-size:1.2em;
+  }
+
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap:18px;
+    margin-top:10px;
+  }
+
+  .step{
+    background: linear-gradient(160deg,#ffffff, #f0fbff);
+    border-radius:18px;
+    padding:18px;
+    border:3px solid #9fdcff;
+    text-align:center;
+    transition: transform 0.25s ease;
+    cursor:pointer;
+    position:relative;
+  }
+  .step:hover{
+    transform: translateY(-6px) rotate(-1deg);
+  }
+  .step .emoji{
+    font-size:2.4em;
+    display:block;
+    margin-bottom:6px;
+  }
+  .step h3{
+    color:#0b6ea8;
+    font-size:1.15em;
+    margin-bottom:6px;
+  }
+  .step p{
+    color:#3d5a73;
+    font-size:0.95em;
+    line-height:1.4;
+  }
+  .step .nomor{
+    position:absolute;
+    top:-14px;
+    left:-14px;
+    background:#ffb703;
+    color:#fff;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    box-shadow:0 3px 0 #d99500;
+  }
+
+  .arrow-row{
+    text-align:center;
+    font-size:1.6em;
+    color:#7fd0ff;
+    margin:-6px 0;
+  }
+
+  .quiz-btn{
+    display:block;
+    margin:26px auto;
+    background:#ffb703;
+    color:#fff;
+    border:none;
+    padding:14px 30px;
+    border-radius:30px;
+    font-size:1.1em;
+    font-family:inherit;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 5px 0 #d99500;
+    transition: all 0.15s ease;
+  }
+  .quiz-btn:hover{ transform: translateY(2px); box-shadow:0 3px 0 #d99500; }
+
+  .quiz-area{
+    display:none;
+    background:#fff;
+    border-radius:20px;
+    padding:20px;
+    border:3px dashed #ffb703;
+    margin-bottom:22px;
+  }
+  .quiz-area.active{ display:block; }
+  .quiz-q{
+    color:#1287c4;
+    font-size:1.15em;
+    margin-bottom:14px;
+    font-weight:bold;
+  }
+  .quiz-opt{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:#eaf9ff;
+    border:2px solid #9fdcff;
+    padding:12px 16px;
+    border-radius:14px;
+    margin-bottom:10px;
+    font-size:1em;
+    font-family:inherit;
+    cursor:pointer;
+    color:#2c4a63;
+    transition: 0.15s;
+  }
+  .quiz-opt:hover{ background:#d6f2ff; }
+  .quiz-opt.benar{ background:#c8f7c5 !important; border-color:#4caf50; }
+  .quiz-opt.salah{ background:#ffd6d6 !important; border-color:#e57373; }
+
+  .quiz-feedback{
+    margin-top:12px;
+    font-weight:bold;
+    font-size:1.05em;
+    min-height:24px;
+  }
+
+  .quiz-nav{
+    display:flex;
+    justify-content:space-between;
+    margin-top:14px;
+  }
+  .quiz-nav button{
+    background:#1287c4;
+    color:#fff;
+    border:none;
+    padding:9px 18px;
+    border-radius:20px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .quiz-nav button:disabled{ opacity:0.4; cursor:default; }
+
+  .skor{
+    text-align:center;
+    font-size:1.3em;
+    color:#0b6ea8;
+    font-weight:bold;
+    display:none;
+  }
+  .skor.active{ display:block; }
+
+  footer{
+    text-align:center;
+    color:#0b6ea8;
+    padding:20px 0 10px;
+    font-size:0.95em;
+    position:relative;
+    z-index:2;
+  }
+
+  @keyframes bounce{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-10px); }
+  }
+  .bounce{ animation: bounce 2.2s ease-in-out infinite; }
+
+  @media (max-width:600px){
+    header h1{ font-size:1.7em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+
+<header>
+  <h1>💧 Petualangan Siklus Air 💧</h1>
+  <p>Yuk belajar bareng Sasa si tetes air yang lucu!</p>
+</header>
+
+<div class="mascot-box">
+  <svg width="110" height="130" viewBox="0 0 110 130" class="bounce">
+    <path d="M55 5 C55 5, 15 60, 15 90 C15 112, 33 128, 55 128 C77 128, 95 112, 95 90 C95 60, 55 5, 55 5 Z" fill="#5ec8ff" stroke="#1287c4" stroke-width="3"/>
+    <ellipse cx="40" cy="75" rx="10" ry="6" fill="#ffffff" opacity="0.6"/>
+    <circle cx="42" cy="95" r="6" fill="#0b3d55"/>
+    <circle cx="70" cy="95" r="6" fill="#0b3d55"/>
+    <circle cx="44" cy="93" r="2" fill="#fff"/>
+    <circle cx="72" cy="93" r="2" fill="#fff"/>
+    <path d="M42 110 Q55 122 68 110" stroke="#0b3d55" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="30" cy="98" r="6" fill="#ffb3c6" opacity="0.7"/>
+    <circle cx="82" cy="98" r="6" fill="#ffb3c6" opacity="0.7"/>
+  </svg>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>📖 Apa itu Siklus Air?</h2>
+    <p>
+      Siklus air adalah perjalanan air yang berputar terus menerus dari bumi ke langit, lalu turun lagi ke bumi, tanpa pernah berhenti. Air di laut, sungai, dan danau bisa berubah jadi uap, naik ke langit, berkumpul jadi awan, lalu jatuh lagi sebagai hujan. Begitu terus seperti roda yang berputar, tidak pernah habis!
+    </p>
+    <div class="bubble">
+      Sasa bilang: "Aku sudah keliling dari laut, jadi awan, jadi hujan, sampai ratusan kali lho. Seru banget!"
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔄 Proses-Proses dalam Siklus Air</h2>
+    <p>Ada 6 proses penting yang dilalui air dalam perjalanannya. Yuk kita urutkan satu per satu!</p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="nomor">1</span>
+        <span class="emoji">☀️💦</span>
+        <h3>Evaporasi</h3>
+        <p>Air di laut, sungai, dan danau dipanasi matahari sampai berubah jadi uap air dan naik ke langit.</p>
+      </div>
+
+      <div class="step">
+        <span class="nomor">2</span>
+        <span class="emoji">🌿💨</span>
+        <h3>Transpirasi</h3>
+        <p>Tumbuhan juga ikut melepas uap air dari daunnya. Uap ini juga naik ke langit, bergabung dengan uap dari evaporasi.</p>
+      </div>
+
+      <div class="step">
+        <span class="nomor">3</span>
+        <span class="emoji">☁️❄️</span>
+        <h3>Kondensasi</h3>
+        <p>Di langit yang dingin, uap air berubah menjadi titik-titik air kecil yang berkumpul membentuk awan.</p>
+      </div>
+
+      <div class="step">
+        <span class="nomor">4</span>
+        <span class="emoji">🌧️</span>
+        <h3>Presipitasi</h3>
+        <p>Awan yang sudah penuh titik air akan menjatuhkan airnya ke bumi, jadilah hujan (atau salju di tempat dingin).</p>
+      </div>
+
+      <div class="step">
+        <span class="nomor">5</span>
+        <span class="emoji">🌊🏞️</span>
+        <h3>Limpasan (Run Off)</h3>
+        <p>Air hujan yang jatuh mengalir di permukaan tanah menuju sungai, danau, dan akhirnya kembali ke laut.</p>
+      </div>
+
+      <div class="step">
+        <span class="nomor">6</span>
+        <span class="emoji">🕳️💧</span>
+        <h3>Infiltrasi</h3>
+        <p>Sebagian air hujan meresap masuk ke dalam tanah, menjadi air tanah yang bisa kita ambil lewat sumur.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧠 Kenapa Siklus Air Penting?</h2>
+    <p>
+      Berkat siklus air, air bersih selalu tersedia untuk kita minum, untuk tumbuhan tumbuh, dan untuk hewan hidup. Kalau siklus air terganggu, misalnya karena hutan gundul atau sungai tercemar, air bersih bisa jadi susah didapat. Makanya kita harus menjaga alam supaya siklus air tetap lancar!
+    </p>
+    <div class="bubble">
+      Sasa berpesan: "Ayo hemat air dan jaga pohon-pohon, supaya aku bisa terus berputar dengan bahagia!"
+    </div>
+  </div>
+
+  <button class="quiz-btn" onclick="window.location.href='kuis-siklus-air.html'">🎮 Yuk Uji Pemahamanmu!</button>
+
+  <div class="quiz-area" id="quizArea">
+    <div class="quiz-q" id="quizQ"></div>
+    <div id="quizOpts"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <div class="quiz-nav">
+      <span id="quizProgress" style="color:#0b6ea8;font-weight:bold;"></span>
+      <button id="btnNext" onclick="soalBerikutnya()" disabled>Lanjut ➡️</button>
+    </div>
+  </div>
+
+  <div class="skor" id="skorArea">
+    🎉 Skor kamu: <span id="skorNilai"></span> / <span id="skorTotal"></span> 🎉
+    <div class="bubble" id="skorPesan" style="margin-top:12px;"></div>
+  </div>
+  <button
+    class="kembali"
+    onclick="window.location.href='index.html'">
+
+    ⬅ Kembali
+
+</button>
+
+</div>
+
+<script>
+const soal = [
+  {
+    q: "Proses air laut berubah menjadi uap karena panas matahari disebut...",
+    opsi: ["Evaporasi", "Presipitasi", "Infiltrasi", "Limpasan"],
+    jawaban: 0
+  },
+  {
+    q: "Uap air yang keluar dari daun tumbuhan disebut proses...",
+    opsi: ["Kondensasi", "Transpirasi", "Evaporasi", "Presipitasi"],
+    jawaban: 1
+  },
+  {
+    q: "Titik-titik air berkumpul membentuk awan di langit disebut...",
+    opsi: ["Infiltrasi", "Limpasan", "Kondensasi", "Evaporasi"],
+    jawaban: 2
+  },
+  {
+    q: "Air hujan yang jatuh dari awan ke bumi disebut...",
+    opsi: ["Presipitasi", "Transpirasi", "Infiltrasi", "Kondensasi"],
+    jawaban: 0
+  },
+  {
+    q: "Air hujan yang meresap ke dalam tanah menjadi air tanah disebut...",
+    opsi: ["Limpasan", "Infiltrasi", "Evaporasi", "Kondensasi"],
+    jawaban: 1
+  },
+  {
+    q: "Air hujan yang mengalir di permukaan tanah menuju sungai disebut...",
+    opsi: ["Infiltrasi", "Kondensasi", "Limpasan", "Transpirasi"],
+    jawaban: 2
+  }
+];
+
+let idx = 0;
+let skor = 0;
+let sudahJawab = false;
+
+function mulaiKuis(){
+  idx = 0;
+  skor = 0;
+  sudahJawab = false;
+  document.getElementById('quizArea').classList.add('active');
+  document.getElementById('skorArea').classList.remove('active');
+  tampilkanSoal();
+  document.getElementById('quizArea').scrollIntoView({behavior:"smooth"});
+}
+
+function tampilkanSoal(){
+  sudahJawab = false;
+  const s = soal[idx];
+  document.getElementById('quizQ').textContent = (idx+1) + ". " + s.q;
+  document.getElementById('quizProgress').textContent = "Soal " + (idx+1) + " / " + soal.length;
+  document.getElementById('quizFeedback').textContent = "";
+  document.getElementById('btnNext').disabled = true;
+
+  const optsDiv = document.getElementById('quizOpts');
+  optsDiv.innerHTML = "";
+  s.opsi.forEach((teks, i) => {
+    const btn = document.createElement('button');
+    btn.className = "quiz-opt";
+    btn.textContent = teks;
+    btn.onclick = () => pilihJawaban(i, btn);
+    optsDiv.appendChild(btn);
+  });
+}
+
+function pilihJawaban(i, btnEl){
+  if(sudahJawab) return;
+  sudahJawab = true;
+  const s = soal[idx];
+  const semuaBtn = document.querySelectorAll('.quiz-opt');
+
+  if(i === s.jawaban){
+    btnEl.classList.add('benar');
+    document.getElementById('quizFeedback').textContent = "✅ Benar! Hebat sekali!";
+    document.getElementById('quizFeedback').style.color = "#2e7d32";
+    skor++;
+  } else {
+    btnEl.classList.add('salah');
+    semuaBtn[s.jawaban].classList.add('benar');
+    document.getElementById('quizFeedback').textContent = "❌ Belum tepat, yuk coba lagi lain kali!";
+    document.getElementById('quizFeedback').style.color = "#c62828";
+  }
+  document.getElementById('btnNext').disabled = false;
+}
+
+function soalBerikutnya(){
+  idx++;
+  if(idx < soal.length){
+    tampilkanSoal();
+  } else {
+    tampilkanSkor();
+  }
+}
+
+function tampilkanSkor(){
+  document.getElementById('quizArea').classList.remove('active');
+  document.getElementById('skorArea').classList.add('active');
+  document.getElementById('skorNilai').textContent = skor;
+  document.getElementById('skorTotal').textContent = soal.length;
+
+  let pesan = "";
+  if(skor === soal.length) pesan = "Sasa bilang: 'Kamu juara siklus air! Keren banget!' 🌟";
+  else if(skor >= soal.length/2) pesan = "Sasa bilang: 'Sudah lumayan, coba baca materinya lagi ya!' 😊";
+  else pesan = "Sasa bilang: 'Ayo semangat baca materinya lagi, pasti bisa!' 💪";
+  document.getElementById('skorPesan').textContent = pesan;
+  document.getElementById('skorArea').scrollIntoView({behavior:"smooth"});
+}
+</script>
+
+</body>
+</html>

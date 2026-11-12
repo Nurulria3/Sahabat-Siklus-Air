@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tantangan Tetesi - Benar atau Salah</title>
+<style>
+  :root{
+    --sky-top:#bfe9ff;
+    --sky-bottom:#eaf8ff;
+    --teal:#0f9aa4;
+    --teal-dark:#0b7b83;
+    --sun:#ffd166;
+    --drop:#2e86de;
+    --drop-dark:#1b5fa8;
+    --correct:#3fb56d;
+    --correct-bg:#e4f8ec;
+    --wrong:#e8564f;
+    --wrong-bg:#fdeceb;
+    --card:#ffffff;
+    --ink:#123244;
+    --ink-soft:#4a6a78;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Trebuchet MS','Segoe UI',Verdana,sans-serif;
+    background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-bottom) 55%,#ffffff 100%);
+    min-height:100vh;
+    overflow-x:hidden;
+    color:var(--ink);
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:24px 14px 60px;
+  }
+
+  /* background decoration */
+  .sun{
+    position:fixed;
+    top:-40px;right:-40px;
+    width:160px;height:160px;
+    background:radial-gradient(circle at 40% 40%, #ffe29a, var(--sun));
+    border-radius:50%;
+    box-shadow:0 0 60px 20px rgba(255,209,102,0.45);
+    z-index:0;
+  }
+  .cloud{
+    position:fixed;
+    background:#ffffff;
+    border-radius:50px;
+    opacity:0.85;
+    z-index:0;
+    filter:drop-shadow(0 6px 6px rgba(0,0,0,0.05));
+  }
+  .cloud::before,.cloud::after{
+    content:'';
+    position:absolute;
+    background:#ffffff;
+    border-radius:50%;
+  }
+  .cloud1{ width:120px;height:44px; top:60px; left:6%; animation:drift 34s linear infinite;}
+  .cloud1::before{ width:60px;height:60px; top:-30px; left:14px;}
+  .cloud1::after{ width:44px;height:44px; top:-20px; left:66px;}
+  .cloud2{ width:90px;height:34px; top:150px; right:8%; animation:drift 28s linear infinite reverse;}
+  .cloud2::before{ width:46px;height:46px; top:-22px; left:10px;}
+  .cloud2::after{ width:34px;height:34px; top:-14px; left:48px;}
+  @keyframes drift{
+    0%{transform:translateX(0);}
+    50%{transform:translateX(24px);}
+    100%{transform:translateX(0);}
+  }
+  .rain-drop{
+    position:fixed;
+    top:-20px;
+    width:8px;height:12px;
+    background:var(--drop);
+    border-radius:0 50% 50% 50%;
+    transform:rotate(45deg);
+    opacity:0.35;
+    animation:fall linear infinite;
+    z-index:0;
+  }
+  @keyframes fall{
+    to{ transform:translateY(115vh) rotate(45deg); }
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:520px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .badge-eyebrow{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:1.5px;
+    font-weight:bold;
+    color:var(--teal-dark);
+    background:#d7f4f2;
+    padding:4px 12px;
+    border-radius:20px;
+    margin-bottom:8px;
+  }
+  h1{
+    margin:0;
+    font-size:26px;
+    color:var(--teal-dark);
+    text-shadow:0 2px 0 #ffffff;
+  }
+  h1 span{ color:var(--drop-dark); }
+  .subtitle{
+    margin:6px 0 0;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+
+  /* mascot */
+  .mascot-zone{
+    display:flex;
+    justify-content:center;
+    margin:10px 0 4px;
+  }
+  .tetesi{
+    width:76px;height:92px;
+    transition:transform 0.25s ease;
+  }
+  .tetesi.happy{ animation:bounce 0.5s ease; }
+  .tetesi.sad{ animation:shake 0.5s ease; }
+  @keyframes bounce{
+    0%{transform:translateY(0) scale(1);}
+    30%{transform:translateY(-16px) scale(1.05);}
+    60%{transform:translateY(0) scale(0.98);}
+    100%{transform:translateY(0) scale(1);}
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-8px) rotate(-4deg);}
+    75%{transform:translateX(8px) rotate(4deg);}
+  }
+
+  /* progress */
+  .progress-row{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    margin:14px 0 18px;
+    flex-wrap:wrap;
+  }
+  .dot{
+    width:14px;height:14px;
+    border-radius:50%;
+    background:#cfeaf0;
+    border:2px solid #ffffff;
+    transition:background 0.2s;
+  }
+  .dot.current{ background:var(--sun); box-shadow:0 0 0 3px #fff3d3; }
+  .dot.correct{ background:var(--correct); }
+  .dot.wrong{ background:var(--wrong); }
+
+  .scorebar{
+    text-align:center;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .scorebar strong{ color:var(--teal-dark); }
+
+  /* quiz card */
+  .card{
+    background:var(--card);
+    border-radius:26px;
+    padding:28px 24px 26px;
+    box-shadow:0 18px 36px -14px rgba(15,60,70,0.28);
+    position:relative;
+    min-height:190px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    border:3px solid #ffffff;
+  }
+  .qnum{
+    font-size:12px;
+    font-weight:bold;
+    color:var(--teal);
+    letter-spacing:1px;
+    margin-bottom:8px;
+  }
+  .question{
+    font-size:19px;
+    line-height:1.5;
+    color:var(--ink);
+    font-weight:bold;
+    min-height:80px;
+  }
+
+  .answer-row{
+    display:flex;
+    gap:12px;
+    margin-top:22px;
+  }
+  .ans-btn{
+    flex:1;
+    padding:14px 8px;
+    border-radius:16px;
+    border:none;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+    box-shadow:0 6px 0 rgba(0,0,0,0.08);
+  }
+  .ans-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,0.08); }
+  .ans-btn:disabled{ cursor:default; opacity:0.55; }
+  .btn-true{ background:var(--correct-bg); color:#1f7a45; }
+  .btn-false{ background:var(--wrong-bg); color:#b6362f; }
+  .ans-btn:not(:disabled).btn-true:hover{ background:#d3f2df; }
+  .ans-btn:not(:disabled).btn-false:hover{ background:#fbdedb; }
+
+  /* feedback */
+  .feedback{
+    margin-top:16px;
+    border-radius:16px;
+    padding:14px 16px;
+    font-size:14px;
+    line-height:1.5;
+    display:none;
+  }
+  .feedback.show{ display:block; animation:pop 0.25s ease; }
+  @keyframes pop{
+    from{ opacity:0; transform:translateY(6px);}
+    to{ opacity:1; transform:translateY(0);}
+  }
+  .feedback.correct{ background:var(--correct-bg); color:#1f7a45; border:2px solid #bcead0; }
+  .feedback.wrong{ background:var(--wrong-bg); color:#b6362f; border:2px solid #f5c9c5; }
+  .feedback strong{ display:block; margin-bottom:4px; font-size:15px; }
+
+  .next-btn{
+    margin-top:16px;
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:14px;
+    background:var(--teal);
+    color:#fff;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+    display:none;
+    box-shadow:0 6px 0 var(--teal-dark);
+  }
+  .next-btn.show{ display:block; }
+  .next-btn:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--teal-dark); }
+
+  /* result screen */
+  .result{
+    display:none;
+    text-align:center;
+    background:var(--card);
+    border-radius:26px;
+    padding:34px 24px;
+    box-shadow:0 18px 36px -14px rgba(15,60,70,0.28);
+    border:3px solid #ffffff;
+  }
+  .result.show{ display:block; animation:pop 0.3s ease; }
+  .result .medal{ font-size:56px; }
+  .result h2{ margin:6px 0 2px; color:var(--teal-dark); }
+  .result .score-big{
+    font-size:42px;
+    font-weight:bold;
+    color:var(--drop-dark);
+    margin:6px 0;
+  }
+  .result p.msg{
+    color:var(--ink-soft);
+    font-size:14px;
+    margin:6px 0 22px;
+  }
+  .result-actions{
+    display:flex;
+    gap:10px;
+  }
+  .btn-secondary{
+    flex:1;
+    padding:12px;
+    border-radius:14px;
+    border:2px solid var(--teal);
+    background:#fff;
+    color:var(--teal-dark);
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .btn-primary{
+    flex:1;
+    padding:12px;
+    border-radius:14px;
+    border:none;
+    background:var(--drop);
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 6px 0 var(--drop-dark);
+  }
+  .btn-primary:active{ transform:translateY(3px); box-shadow:0 2px 0 var(--drop-dark); }
+
+  .review-list{
+    text-align:left;
+    margin-top:20px;
+    max-height:220px;
+    overflow-y:auto;
+    border-top:2px dashed #d7ecf0;
+    padding-top:14px;
+  }
+  .review-item{
+    font-size:12.5px;
+    padding:8px 0;
+    border-bottom:1px solid #f0f5f6;
+    display:flex;
+    gap:8px;
+  }
+  .review-mark{ font-weight:bold; flex-shrink:0; }
+  .review-mark.ok{ color:var(--correct); }
+  .review-mark.no{ color:var(--wrong); }
+
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--ink-soft);
+    opacity:0.7;
+    margin-top:22px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
+  }
+
+  @media (max-width:380px){
+    .question{ font-size:17px; }
+    h1{ font-size:22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sun"></div>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="badge-eyebrow">SISWA KELAS V SD</div>
+    <h1>Tantangan <span>Tetesi</span></h1>
+    <p class="subtitle">Yuk uji pemahamanmu tentang Siklus Air. Jawab BENAR atau SALAH!</p>
+  </header>
+
+  <div class="mascot-zone">
+    <svg class="tetesi" id="tetesi" viewBox="0 0 100 120">
+      <path d="M50 5 C 75 45, 95 65, 95 85 A 45 45 0 1 1 5 85 C 5 65, 25 45, 50 5 Z" fill="#2e86de"/>
+      <ellipse cx="35" cy="70" rx="10" ry="14" fill="#7fc4ff" opacity="0.7"/>
+      <circle id="eyeL" cx="38" cy="80" r="5" fill="#123244"/>
+      <circle id="eyeR" cx="62" cy="80" r="5" fill="#123244"/>
+      <path id="mouth" d="M40 92 Q50 98 60 92" stroke="#123244" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="scorebar" id="scorebar">Skor: <strong>0</strong> dari 0</div>
+  <div class="progress-row" id="progressRow"></div>
+
+  <div class="card" id="quizCard">
+    <div>
+      <div class="qnum" id="qnum">SOAL 1 / 20</div>
+      <div class="question" id="questionText">Memuat soal...</div>
+    </div>
+
+    <div class="answer-row" id="answerRow">
+      <button class="ans-btn btn-true" id="btnTrue">✔ BENAR</button>
+      <button class="ans-btn btn-false" id="btnFalse">✘ SALAH</button>
+    </div>
+
+    <div class="feedback" id="feedback">
+      <strong id="feedbackTitle"></strong>
+      <span id="feedbackText"></span>
+    </div>
+
+    <button class="next-btn" id="nextBtn">Lanjut ➜</button>
+    <!-- =================================
+     TOMBOL KEMBALI
+================================== -->
+
+<button
+    class="kembali"
+    onclick="window.location.href='menuGame.html'">
+
+    ⬅ Kembali
+
+</button>
+  </div>
+
+  <div class="result" id="resultCard">
+    <div class="medal" id="medal">🏆</div>
+    <h2 id="resultTitle">Hebat sekali!</h2>
+    <div class="score-big"><span id="finalScore">0</span>/20</div>
+    <p class="msg" id="resultMsg">Kamu sudah paham betul tentang siklus air.</p>
+    <div class="result-actions">
+      <button class="btn-secondary" id="reviewBtn">Lihat Jawaban</button>
+      <button class="btn-primary" id="restartBtn">Main Lagi</button>
+      <!-- =================================
+     TOMBOL KEMBALI
+================================== -->
+
+<button
+    class="kembali"
+    onclick="window.location.href='menuGame.html'">
+
+    ⬅ Kembali
+
+</button>
+    </div>
+    <div class="review-list" id="reviewList" style="display:none;"></div>
+  </div>
+
+  <footer>Media Pembelajaran Siklus Air &middot; Program KKN &middot; Dibuat untuk digunakan luring (offline)</footer>
+</div>
+
+<script>
+const questions = [
+  { q: "Matahari adalah sumber energi utama yang menggerakkan siklus air.", a: true,
+    exp: "Betul. Panas matahari membuat air menguap dan menjadi penggerak utama seluruh siklus air." },
+  { q: "Evaporasi adalah proses berubahnya air menjadi uap air.", a: true,
+    exp: "Betul. Evaporasi terjadi saat air di laut, sungai, dan danau menguap karena panas matahari." },
+  { q: "Kondensasi terjadi ketika uap air mendingin dan berubah menjadi titik-titik air.", a: true,
+    exp: "Betul. Proses inilah yang membentuk awan di atmosfer." },
+  { q: "Presipitasi adalah proses air jatuh ke bumi dalam bentuk hujan, salju, atau es.", a: true,
+    exp: "Betul. Presipitasi adalah tahap saat air dari awan turun kembali ke permukaan bumi." },
+  { q: "Transpirasi hanya terjadi dari penguapan air laut, bukan dari tumbuhan.", a: false,
+    exp: "Salah. Transpirasi adalah penguapan air dari daun tumbuhan, berbeda dengan evaporasi dari permukaan air." },
+  { q: "Infiltrasi adalah proses meresapnya air hujan ke dalam tanah.", a: true,
+    exp: "Betul. Air yang meresap ini kemudian menjadi cadangan air tanah." },
+  { q: "Awan terbentuk dari kumpulan uap air yang mengembun di atmosfer.", a: true,
+    exp: "Betul. Uap air yang mendingin di udara berkumpul membentuk awan." },
+  { q: "Jumlah air di bumi terus bertambah setiap tahunnya.", a: false,
+    exp: "Salah. Jumlah air di bumi relatif tetap karena siklus air berputar terus-menerus, bukan menciptakan air baru." },
+  { q: "Limpasan (run off) adalah air hujan yang mengalir di atas permukaan tanah menuju sungai atau laut.", a: true,
+    exp: "Betul. Air yang tidak meresap ke tanah akan mengalir sebagai limpasan permukaan." },
+  { q: "Siklus air hanya terjadi di laut dan tidak melibatkan daratan.", a: false,
+    exp: "Salah. Siklus air melibatkan laut, daratan, sungai, tumbuhan, dan atmosfer secara bersamaan." },
+  { q: "Tumbuhan tidak memiliki peran apa pun dalam siklus air.", a: false,
+    exp: "Salah. Tumbuhan berperan lewat transpirasi, yaitu melepas uap air dari daunnya ke atmosfer." },
+  { q: "Es di kutub dan gletser termasuk bagian dari siklus air.", a: true,
+    exp: "Betul. Es dan salju yang mencair juga mengalir dan kembali menjadi bagian dari siklus air." },
+  { q: "Uap air yang naik ke atmosfer akan tetap berbentuk gas selamanya.", a: false,
+    exp: "Salah. Uap air akan mendingin dan mengembun membentuk awan, lalu turun sebagai hujan." },
+  { q: "Hujan merupakan salah satu bentuk presipitasi.", a: true,
+    exp: "Betul. Hujan, salju, dan es termasuk bentuk-bentuk presipitasi." },
+  { q: "Air tanah tidak pernah bisa kembali lagi ke atmosfer.", a: false,
+    exp: "Salah. Air tanah bisa diserap akar tumbuhan lalu dilepas lagi ke udara melalui transpirasi." },
+  { q: "Siklus air disebut juga siklus hidrologi.", a: true,
+    exp: "Betul. Istilah ilmiah untuk siklus air adalah siklus hidrologi." },
+  { q: "Penggundulan hutan tidak berpengaruh terhadap siklus air.", a: false,
+    exp: "Salah. Penggundulan hutan mengurangi transpirasi dan membuat limpasan air hujan meningkat, sehingga bisa memicu banjir." },
+  { q: "Proses kondensasi terjadi jauh di atmosfer, bukan di dalam tanah.", a: true,
+    exp: "Betul. Kondensasi terjadi ketika uap air naik dan mendingin di lapisan atmosfer, membentuk awan." },
+  { q: "Sungai dan danau berperan mengalirkan air menuju laut sebagai bagian dari siklus air.", a: true,
+    exp: "Betul. Air permukaan seperti sungai dan danau menjadi jalur air menuju laut sebelum menguap kembali." },
+  { q: "Siklus air membantu menjaga ketersediaan air bersih di bumi.", a: true,
+    exp: "Betul. Siklus air terus membersihkan dan mendistribusikan air ke seluruh permukaan bumi." }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let userAnswers = [];
+
+const qnumEl = document.getElementById('qnum');
+const questionText = document.getElementById('questionText');
+const btnTrue = document.getElementById('btnTrue');
+const btnFalse = document.getElementById('btnFalse');
+const feedback = document.getElementById('feedback');
+const feedbackTitle = document.getElementById('feedbackTitle');
+const feedbackText = document.getElementById('feedbackText');
+const nextBtn = document.getElementById('nextBtn');
+const scorebar = document.getElementById('scorebar');
+const progressRow = document.getElementById('progressRow');
+const quizCard = document.getElementById('quizCard');
+const resultCard = document.getElementById('resultCard');
+const finalScore = document.getElementById('finalScore');
+const resultTitle = document.getElementById('resultTitle');
+const resultMsg = document.getElementById('resultMsg');
+const medal = document.getElementById('medal');
+const eyeL = document.getElementById('eyeL');
+const eyeR = document.getElementById('eyeR');
+const mouth = document.getElementById('mouth');
+const tetesi = document.getElementById('tetesi');
+const reviewBtn = document.getElementById('reviewBtn');
+const reviewList = document.getElementById('reviewList');
+const restartBtn = document.getElementById('restartBtn');
+
+function buildProgress(){
+  progressRow.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = 'dot-' + i;
+    progressRow.appendChild(d);
+  });
+}
+
+function updateProgress(){
+  questions.forEach((_, i) => {
+    const d = document.getElementById('dot-' + i);
+    d.classList.remove('current','correct','wrong');
+    if (userAnswers[i] === undefined){
+      if (i === current) d.classList.add('current');
+    } else {
+      d.classList.add(userAnswers[i].correct ? 'correct' : 'wrong');
+    }
+  });
+}
+
+function setMascot(state){
+  tetesi.classList.remove('happy','sad');
+  if (state === 'happy'){
+    tetesi.classList.add('happy');
+    eyeL.setAttribute('r', 5); eyeR.setAttribute('r', 5);
+    mouth.setAttribute('d', 'M38 90 Q50 102 62 90');
+  } else if (state === 'sad'){
+    tetesi.classList.add('sad');
+    mouth.setAttribute('d', 'M40 96 Q50 88 60 96');
+  } else {
+    mouth.setAttribute('d', 'M40 92 Q50 98 60 92');
+  }
+}
+
+function loadQuestion(){
+  answered = false;
+  const item = questions[current];
+  qnum.textContent = 'SOAL ' + (current + 1) + ' / ' + questions.length;
+  questionText.textContent = item.q;
+  feedback.classList.remove('show','correct','wrong');
+  nextBtn.classList.remove('show');
+  btnTrue.disabled = false;
+  btnFalse.disabled = false;
+  setMascot('neutral');
+  updateProgress();
+  scorebar.innerHTML = 'Skor: <strong>' + score + '</strong> dari ' + questions.length;
+}
+
+function handleAnswer(choice){
+  if (answered) return;
+  answered = true;
+  const item = questions[current];
+  const isCorrect = (choice === item.a);
+  userAnswers[current] = { choice, correct: isCorrect };
+  if (isCorrect) score++;
+
+  btnTrue.disabled = true;
+  btnFalse.disabled = true;
+
+  feedback.classList.add('show', isCorrect ? 'correct' : 'wrong');
+  feedbackTitle.textContent = isCorrect ? 'Tepat sekali!' : 'Belum tepat.';
+  feedbackText.textContent = item.exp;
+
+  setMascot(isCorrect ? 'happy' : 'sad');
+  updateProgress();
+  scorebar.innerHTML = 'Skor: <strong>' + score + '</strong> dari ' + questions.length;
+
+  nextBtn.classList.add('show');
+  nextBtn.textContent = (current === questions.length - 1) ? 'Lihat Hasil ➜' : 'Lanjut ➜';
+}
+
+btnTrue.addEventListener('click', () => handleAnswer(true));
+btnFalse.addEventListener('click', () => handleAnswer(false));
+
+nextBtn.addEventListener('click', () => {
+  if (current < questions.length - 1){
+    current++;
+    loadQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult(){
+  quizCard.style.display = 'none';
+  progressRow.style.display = 'none';
+  document.querySelector('.mascot-zone').style.display = 'none';
+  scorebar.style.display = 'none';
+  resultCard.classList.add('show');
+
+  finalScore.textContent = score;
+  const pct = score / questions.length;
+
+  if (pct >= 0.9){
+    medal.textContent = '🏆';
+    resultTitle.textContent = 'Luar Biasa, Ahli Siklus Air!';
+    resultMsg.textContent = 'Pemahamanmu tentang siklus air sangat bagus. Pertahankan ya!';
+  } else if (pct >= 0.7){
+    medal.textContent = '🥈';
+    resultTitle.textContent = 'Bagus Sekali!';
+    resultMsg.textContent = 'Kamu sudah cukup memahami siklus air. Sedikit lagi jadi ahli!';
+  } else if (pct >= 0.5){
+    medal.textContent = '🥉';
+    resultTitle.textContent = 'Lumayan, Terus Belajar!';
+    resultMsg.textContent = 'Beberapa bagian masih perlu dipelajari ulang. Coba lagi yuk!';
+  } else {
+    medal.textContent = '💧';
+    resultTitle.textContent = 'Ayo Belajar Lagi!';
+    resultMsg.textContent = 'Jangan menyerah, baca lagi materi siklus air lalu coba sekali lagi.';
+  }
+
+  buildReview();
+}
+
+function buildReview(){
+  reviewList.innerHTML = '';
+  questions.forEach((item, i) => {
+    const ua = userAnswers[i];
+    const row = document.createElement('div');
+    row.className = 'review-item';
+    const mark = document.createElement('span');
+    mark.className = 'review-mark ' + (ua.correct ? 'ok' : 'no');
+    mark.textContent = ua.correct ? '✔' : '✘';
+    const text = document.createElement('span');
+    const correctLabel = item.a ? 'BENAR' : 'SALAH';
+    text.textContent = (i+1) + '. ' + item.q + ' (Jawaban tepat: ' + correctLabel + ')';
+    row.appendChild(mark);
+    row.appendChild(text);
+    reviewList.appendChild(row);
+  });
+}
+
+reviewBtn.addEventListener('click', () => {
+  const showing = reviewList.style.display === 'block';
+  reviewList.style.display = showing ? 'none' : 'block';
+  reviewBtn.textContent = showing ? 'Lihat Jawaban' : 'Sembunyikan';
+});
+
+restartBtn.addEventListener('click', () => {
+  current = 0; score = 0; userAnswers = [];
+  resultCard.classList.remove('show');
+  quizCard.style.display = 'flex';
+  progressRow.style.display = 'flex';
+  document.querySelector('.mascot-zone').style.display = 'flex';
+  scorebar.style.display = 'block';
+  reviewList.style.display = 'none';
+  reviewBtn.textContent = 'Lihat Jawaban';
+  buildProgress();
+  loadQuestion();
+});
+
+function spawnRain(){
+  for (let i = 0; i < 14; i++){
+    const d = document.createElement('div');
+    d.className = 'rain-drop';
+    d.style.left = Math.random() * 100 + 'vw';
+    d.style.animationDuration = (6 + Math.random() * 6) + 's';
+    d.style.animationDelay = (Math.random() * 8) + 's';
+    d.style.opacity = 0.15 + Math.random() * 0.25;
+    document.body.appendChild(d);
+  }
+}
+
+buildProgress();
+loadQuestion();
+spawnRain();
+</script>
+
+</body>
+</html>
